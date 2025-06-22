@@ -11,31 +11,33 @@ function signal.new()
     return setmetatable(self, signalmeta)
 end
 
-function signalmeta:connect(f)
+function signalmeta:Connect(f)
     table.insert(self.connections, {func = f})
     local pos = #self.connections
+    local connection_self = self
     return {
-        disconnect = function()
+        Disconnect = function()
             if not pos then return end
-            self.connections[pos] = nil
+            connection_self.connections[pos] = nil
             pos = nil
         end
     }
 end
 
-function signalmeta:connect_once(f)
+function signalmeta:ConnectOnce(f)
     table.insert(self.connections, {func = f, once = true})
     local pos = #self.connections
+    local connection_self = self
     return {
-        disconnect = function()
+        Disconnect = function()
             if not pos then return end
-            self.connections[pos] = nil
+            connection_self.connections[pos] = nil
             pos = nil
         end
     }
 end
 
-function signalmeta:fire(...)
+function signalmeta:Fire(...)
     for i, v in pairs(self.connections) do
         task.spawn(v.func, ...)
 
