@@ -1,5 +1,5 @@
+local task = require_shared("task")
 local signal = {}
-    signal.MULTI_THREAD = false
 
 local signalmeta = {}
 signalmeta.__index = signalmeta
@@ -37,11 +37,7 @@ end
 
 function signalmeta:fire(...)
     for i, v in pairs(self.connections) do
-        if signal.MULTI_THREAD then
-            require("task").spawn(v.func, ...)
-        else
-            v.func(...)
-        end
+        task.spawn(v.func, ...)
 
         if v.once then
             self.connections[i] = nil
